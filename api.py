@@ -137,7 +137,7 @@ def health():
     })
 
 
-def load_model(model_path: str = "Qwen/Qwen3-ASR-0.6B"):
+def load_model(model_path: str = "Qwen/Qwen3-ASR-1.7B"):
     """Load the ASR model."""
     global asr
 
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Qwen3-ASR Streaming API")
-    parser.add_argument("--model", default="Qwen/Qwen3-ASR-0.6B", help="Model path")
+    parser.add_argument("--model", default="Qwen/Qwen3-ASR-1.7B", help="Model path")
     parser.add_argument("--host", default="0.0.0.0", help="Host to bind")
     parser.add_argument("--port", type=int, default=5000, help="Port to listen on")
     args = parser.parse_args()
