@@ -19,6 +19,25 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from qwen_asr import Qwen3ASRModel
 
+# Register qwen3_asr model type with transformers and vLLM
+from qwen_asr.core.transformers_backend import (
+    Qwen3ASRConfig,
+    Qwen3ASRForConditionalGeneration as Qwen3ASRTransformersModel,
+    Qwen3ASRProcessor,
+)
+from transformers import AutoConfig, AutoModel, AutoProcessor
+
+AutoConfig.register("qwen3_asr", Qwen3ASRConfig)
+AutoModel.register(Qwen3ASRConfig, Qwen3ASRTransformersModel)
+AutoProcessor.register(Qwen3ASRConfig, Qwen3ASRProcessor)
+
+from qwen_asr.core.vllm_backend import Qwen3ASRForConditionalGeneration
+from vllm import ModelRegistry
+
+ModelRegistry.register_model(
+    "Qwen3ASRForConditionalGeneration", Qwen3ASRForConditionalGeneration
+)
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend
 
@@ -151,7 +170,9 @@ def load_model(model_path: str = "Qwen/Qwen3-ASR-1.7B"):
     }
 
     if has_cuda:
-        model_kwargs["gpu_memory_utilization"] = 0.7
+        model_kwargs["gpu_memory_utilization"] = 0.9
+        model_kwargs["max_model_len"] = 4096
+        model_kwargs["enforce_eager"] = True
 
     print(f"Loading model: {model_path}")
     asr = Qwen3ASRModel.LLM(**model_kwargs)

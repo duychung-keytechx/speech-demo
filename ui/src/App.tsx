@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Mic, Square } from 'lucide-react'
 
-const API_BASE = 'http://localhost:5000'
+const API_BASE = ''
 
 function App() {
   const [isRecording, setIsRecording] = useState(false)
@@ -18,6 +18,13 @@ function App() {
   const bufferRef = useRef<Float32Array>(new Float32Array(0))
   const pushingRef = useRef(false)
   const recordingRef = useRef(false)
+  const transcriptRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight
+    }
+  }, [transcript])
 
   const TARGET_SR = 16000
   const CHUNK_MS = 500
@@ -278,10 +285,11 @@ function App() {
               Transcript
             </label>
             <textarea
+              ref={transcriptRef}
               readOnly
               value={transcript}
               placeholder="Transcription will appear here..."
-              className="w-full h-48 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 resize-none font-mono text-sm focus:outline-none"
+              className="w-full h-96 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 resize-none font-mono text-sm focus:outline-none"
             />
           </div>
 
